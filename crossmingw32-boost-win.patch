@@ -1,0 +1,12 @@
+diff -ruN boost_1_32_0./tools/build/v1/gcc-tools.jam boost_1_32_0/tools/build/v1/gcc-tools.jam
+--- boost_1_32_0./tools/build/v1/gcc-tools.jam	2005-01-10 21:22:03.000000000 +0100
++++ boost_1_32_0/tools/build/v1/gcc-tools.jam	2005-01-10 21:29:08.070959656 +0100
+@@ -79,6 +79,8 @@
+ #
+ local on-windows ;
+ 
++on-windows = 1 ;
++
+ if $(NT)
+ {
+     on-windows = 1 ;
