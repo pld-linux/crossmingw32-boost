@@ -1,6 +1,6 @@
 %define		realname	boost
 Summary:	The Boost C++ Libraries - Mingw32 cross version
-Summary(pl):	Biblioteki C++ "Boost" - wersja skro¶na dla Mingw32
+Summary(pl.UTF-8):   Biblioteki C++ "Boost" - wersja skroÅ›na dla Mingw32
 Name:		crossmingw32-%{realname}
 Version:	1.32.0
 %define	_fver	%(echo %{version} | tr . _)
@@ -45,24 +45,24 @@ suitable for eventual standardization. Some of the libraries have
 already been proposed for inclusion in the C++ Standards Committee's
 upcoming C++ Standard Library Technical Report.
 
-%description -l pl
+%description -l pl.UTF-8
 Strona http://www.boost.org/ dostarcza darmowe biblioteki C++ wraz z
-kodem ¼ród³owym. Nacisk po³o¿ono na biblioteki, które dobrze
-wspó³pracuj± ze standardow± bibliotek± C++. Celem jest ustanowienie
-"istniej±cej praktyki" i dostarczenie implementacji, tak ¿e biblioteki
-"Boost" nadaj± siê do ewentualnej standaryzacji. Niektóre z bibliotek
-ju¿ zosta³y zg³oszone do komitetu standaryzacyjnego C++ w nadchodz±cym
+kodem ÅºrÃ³dÅ‚owym. Nacisk poÅ‚oÅ¼ono na biblioteki, ktÃ³re dobrze
+wspÃ³Å‚pracujÄ… ze standardowÄ… bibliotekÄ… C++. Celem jest ustanowienie
+"istniejÄ…cej praktyki" i dostarczenie implementacji, tak Å¼e biblioteki
+"Boost" nadajÄ… siÄ™ do ewentualnej standaryzacji. NiektÃ³re z bibliotek
+juÅ¼ zostaÅ‚y zgÅ‚oszone do komitetu standaryzacyjnego C++ w nadchodzÄ…cym
 Raporcie Technicznym Biblioteki Standardowej C++
 
 %package dll
 Summary:	%{realname} - DLL libraries for Windows
-Summary(pl):	%{realname} - biblioteki DLL dla Windows
+Summary(pl.UTF-8):   %{realname} - biblioteki DLL dla Windows
 Group:		Applications/Emulators
 
 %description dll
 %{realname} - DLL libraries for Windows.
 
-%description dll -l pl
+%description dll -l pl.UTF-8
 %{realname} - biblioteki DLL dla Windows.
 
 %prep
