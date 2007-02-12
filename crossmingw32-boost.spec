@@ -1,6 +1,6 @@
 %define		realname	boost
 Summary:	The Boost C++ Libraries - Mingw32 cross version
-Summary(pl.UTF-8):   Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
+Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
 Version:	1.32.0
 %define	_fver	%(echo %{version} | tr . _)
@@ -56,7 +56,7 @@ Raporcie Technicznym Biblioteki Standardowej C++
 
 %package dll
 Summary:	%{realname} - DLL libraries for Windows
-Summary(pl.UTF-8):   %{realname} - biblioteki DLL dla Windows
+Summary(pl.UTF-8):	%{realname} - biblioteki DLL dla Windows
 Group:		Applications/Emulators
 
 %description dll
