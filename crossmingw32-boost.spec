@@ -2,22 +2,26 @@
 Summary:	The Boost C++ Libraries - Mingw32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
-Version:	1.32.0
+Version:	1.33.1
 %define	_fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/boost/%{realname}_%{_fver}.tar.bz2
-# Source0-md5:	e1d1fc7b8fc8c51df4564c2188ca51cb
+# Source0-md5:	2b999b2fb7798e1737d1fff8fac602ef
 Patch0:		%{name}-win.patch
 URL:		http://www.boost.org/
-Requires:	crossmingw32-runtime
+BuildRequires:	boost-jam
+BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-runtime
 BuildRequires:	crossmingw32-w32api
-BuildRequires:	boost-jam
+BuildRequires:	crossmingw32-zlib
 BuildRequires:	libtool >= 2:1.4d
 BuildRequires:	perl-base
+Requires:	crossmingw32-bzip2
+Requires:	crossmingw32-runtime
+Requires:	crossmingw32-zlib
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		no_install_post_strip	1
@@ -112,7 +116,7 @@ rm -rf serialization
 for i in *
 do
 	cd $i/*
-	lib=`echo lib*so|sed -e 's/\.so//'`
+	lib=`echo lib*.a|sed -e 's/\.a//'`
 	blib=`echo $lib|sed -e 's/^lib//'`
 
 	cd $lib.a
@@ -121,14 +125,24 @@ do
 	$RANLIB ../../../../../../wlib/$lib.a
 	cd ..
 
-	cd $lib.so
-	find -type f -exec mv \{\} . \;
-	%{__cxx} --shared *\.o \
-		-Wl,--enable-auto-image-base \
-		-o ../../../../../../wlib/$blib.dll \
-		-Wl,--out-implib,$lib.dll.a
-	mv $lib.dll.a ../../../../../../wlib/
-	cd ..
+	# libboost_iostreams requires additional
+	# libraries
+	additional_so_params=
+	if [ $lib -eq "libboost_iostreams" ]; then
+		additional_so_params="-lz.dll -lbzip2.dll"
+	fi
+
+	# libboost_wave is static-only
+	if [ -d $lib.so ]; then
+		cd $lib.so
+		find -type f -exec mv \{\} . \;
+		%{__cxx} --shared *\.o $additional_so_params \
+			-Wl,--enable-auto-image-base \
+			-o ../../../../../../wlib/$blib.dll \
+			-Wl,--out-implib,$lib.dll.a
+		mv $lib.dll.a ../../../../../../wlib/
+		cd ..
+	fi
 
 	cd ../..
 done
