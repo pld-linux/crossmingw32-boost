@@ -1,12 +1,48 @@
-diff -ruN boost_1_32_0./tools/build/v1/gcc-tools.jam boost_1_32_0/tools/build/v1/gcc-tools.jam
---- boost_1_32_0./tools/build/v1/gcc-tools.jam	2005-01-10 21:22:03.000000000 +0100
-+++ boost_1_32_0/tools/build/v1/gcc-tools.jam	2005-01-10 21:29:08.070959656 +0100
-@@ -79,6 +79,8 @@
- #
- local on-windows ;
- 
-+on-windows = 1 ;
-+
- if $(NT)
+--- boost_1_34_0/tools/build/v2/util/os.jam.org	2007-06-16 15:29:24.717971888 +0200
++++ boost_1_34_0/tools/build/v2/util/os.jam	2007-06-16 15:31:19.139516164 +0200
+@@ -117,22 +117,7 @@
+ # Returns true if running on windows, whether in cygwin or not.
+ rule on-windows 
  {
-     on-windows = 1 ;
+-    local result ;
+-    if [ modules.peek : NT ] 
+-    {
+-        result = true ;
+-    }
+-    else if [ modules.peek : UNIX ] 
+-    {
+-        switch [ modules.peek : JAMUNAME ] 
+-        {
+-            case CYGWIN* :
+-            {
+-                result = true ;
+-            }
+-        }
+-    }
+-    return $(result) ;
++    return true ;
+ }
+ 
+ if ! [ on-windows ] 
+--- boost_1_34_0/tools/build/v2/tools/gcc.jam.org	2007-06-16 15:32:31.064543550 +0200
++++ boost_1_34_0/tools/build/v2/tools/gcc.jam	2007-06-16 15:32:37.304591591 +0200
+@@ -308,7 +308,7 @@
+     # Yet another alternative would be to create propagated <sharedable> 
+     # feature, and set it when building shared libraries, but that's hard
+     # to implement and will increase target path length even more.
+-    flags gcc.compile OPTIONS <link>shared : -fPIC ;
++    #flags gcc.compile OPTIONS <link>shared : -fPIC ;
+ }    
+ if [ os.name ] != NT && [ os.name ] != OSF
+ {
+--- boost_1_34_0/tools/build/v2/user-config.jam.old	2007-06-16 15:41:42.129475139 +0200
++++ boost_1_34_0/tools/build/v2/user-config.jam	2007-06-16 15:41:48.558494352 +0200
+@@ -18,7 +18,7 @@
+ #  GCC configuration
+ 
+ #  Configure gcc (default version)
+-#  using gcc ;
++using gcc : : i386-mingw32-g++ : ;
+ 
+ #  Configure specific gcc version, giving alternative name to use
+ #  using gcc : 3.2 : g++-3.2 ;
