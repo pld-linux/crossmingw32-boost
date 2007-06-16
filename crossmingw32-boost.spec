@@ -2,13 +2,13 @@
 Summary:	The Boost C++ Libraries - Mingw32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
-Version:	1.33.1
+Version:	1.34.0
 %define	_fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Libraries
 Source0:	http://dl.sourceforge.net/boost/%{realname}_%{_fver}.tar.bz2
-# Source0-md5:	2b999b2fb7798e1737d1fff8fac602ef
+# Source0-md5:	ed5b9291ffad776f8757a916e1726ad0
 Patch0:		%{name}-win.patch
 URL:		http://www.boost.org/
 BuildRequires:	boost-jam
@@ -73,16 +73,9 @@ Group:		Applications/Emulators
 %setup -q -n %{realname}_%{_fver}
 %patch0 -p1
 
-# don't know how to pass it through (b)jam -s (no way?)
-# due to oversophisticated build flags system
-%{__perl} -pi -e 's/ -O3 / %{rpmcflags} /' tools/build/v1/gcc-tools.jam
-
-%ifarch alpha
-# -pthread gcc parameter doesn't add _REENTRANT to cpp macros on alpha (only)
-# don't know, is it gcc bug or intentional omission?
-# anyway, boost check of -D_REENTRANT in its headers, so it's needed here
-%{__perl} -pi -e 's/(CFLAGS.*-pthread)/$1 -D_REENTRANT/' tools/build/v1/gcc-tools.jam
-%endif
+# - don't know how to pass it through (b)jam -s (no way?)
+#   due to oversophisticated build flags system.
+%{__perl} -pi -e 's/ -O3 / %{rpmcxxflags} /' tools/build/v2/tools/gcc.jam
 
 find . -type f -exec sed -e 's/#error "wide char i\/o not supported on this platform"//' -i \{\} \;
 
@@ -98,55 +91,53 @@ RANLIB=%{target}-ranlib ; export RANLIB
 LDSHARED="%{target}-gcc -shared" ; export LDSHARED
 TARGET="%{target}" ; export TARGET
 
-PYTHON_ROOT=
-PYTHON_VERSION=
-
 bjam \
-	-d2 \
-	-sBUILD="release <threading>multi" \
-	-sPYTHON_ROOT=$PYTHON_ROOT \
-	-sPYTHON_VERSION=$PYTHON_VERSION \
-	-sGXX="$CXX" \
-	-sGCC="$CC"
+	-q -d2 --toolset=gcc \
+	--without-python --without-serialization --without-test \
+	variant=release threading=multi inlining=on debug-symbols=on \
+	-sBZIP2_BINARY=bzip2
 
 mkdir wlib
-cd bin/*/*
-rm -rf test
-rm -rf serialization
+cd bin.v2/*
 for i in *
 do
-	cd $i/*
-	lib=`echo lib*.a|sed -e 's/\.a//'`
-	blib=`echo $lib|sed -e 's/^lib//'`
+        cd $i/*/*/*/*/*
+        cd link-static/*
+        $AR cru ../../../../../../../../../../wlib/libboost_$i.a *\.o
+        $RANLIB ../../../../../../../../../../wlib/libboost_$i.a
 
-	cd $lib.a
-	find -type f -exec mv \{\} . \;
-	$AR cru ../../../../../../wlib/$lib.a *\.o
-	$RANLIB ../../../../../../wlib/$lib.a
-	cd ..
+        cd ../..
 
-	# libboost_iostreams requires additional
-	# libraries
-	additional_so_params=
-	if [ $lib -eq "libboost_iostreams" ]; then
-		additional_so_params="-lz.dll -lbzip2.dll"
-	fi
+        # if there is threading-multi dir 
+        # it's content is used for dll and implib
+        dll_dir='link-static/*'
+        up_dir='../..'
+        if [ -d threading-multi ]; then
+                dll_dir='threading-multi'
+                up_dir='./..'
+        fi
 
-	# libboost_wave is static-only
-	if [ -d $lib.so ]; then
-		cd $lib.so
-		find -type f -exec mv \{\} . \;
-		%{__cxx} --shared *\.o $additional_so_params \
-			-Wl,--enable-auto-image-base \
-			-o ../../../../../../wlib/$blib.dll \
-			-Wl,--out-implib,$lib.dll.a
-		mv $lib.dll.a ../../../../../../wlib/
-		cd ..
-	fi
+        cd $dll_dir
 
-	cd ../..
+        # libboost_iostreams requires additional
+        # libraries
+        additional_so_params=
+        if [ $i = "iostreams" ]; then
+                additional_so_params="-lz.dll -lbzip2.dll"
+        fi
+
+        # there are some issuses with dynamic libboost_wave
+        if [ $i != "wave" ]; then
+                $CXX --shared *\.o $additional_so_params \
+                        -Wl,--enable-auto-image-base \
+                        -o $up_dir/../../../../../../../../wlib/boost_$i.dll \
+                        -Wl,--out-implib,libboost_$i.dll.a
+                mv libboost_$i.dll.a $up_dir/../../../../../../../../wlib/
+        fi
+
+        cd $up_dir/../../../../../..
 done
-cd ../../..
+cd ../..
 
 %if 0%{!?debug:1}
 %{target}-strip wlib/*.dll
