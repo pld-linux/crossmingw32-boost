@@ -3,11 +3,11 @@ Summary:	The Boost C++ Libraries - Mingw32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
 Version:	1.34.0
-%define	_fver	%(echo %{version} | tr . _)
+%define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Libraries
-Source0:	http://dl.sourceforge.net/boost/%{realname}_%{_fver}.tar.bz2
+Source0:	http://dl.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
 # Source0-md5:	ed5b9291ffad776f8757a916e1726ad0
 Patch0:		%{name}-win.patch
 URL:		http://www.boost.org/
@@ -62,6 +62,9 @@ Raporcie Technicznym Biblioteki Standardowej C++
 Summary:	%{realname} - DLL libraries for Windows
 Summary(pl.UTF-8):	%{realname} - biblioteki DLL dla Windows
 Group:		Applications/Emulators
+Requires:	crossmingw32-bzip2-dll
+Requires:	crossmingw32-zlib-dll
+Requires:	wine
 
 %description dll
 %{realname} - DLL libraries for Windows.
@@ -70,7 +73,7 @@ Group:		Applications/Emulators
 %{realname} - biblioteki DLL dla Windows.
 
 %prep
-%setup -q -n %{realname}_%{_fver}
+%setup -q -n %{realname}_%{fver}
 %patch0 -p1
 
 # - don't know how to pass it through (b)jam -s (no way?)
@@ -151,7 +154,7 @@ install -d $RPM_BUILD_ROOT%{_datadir}/wine/windows/system
 
 cp -r boost $RPM_BUILD_ROOT%{arch}/include
 install wlib/*.a $RPM_BUILD_ROOT%{arch}/lib
-install wlib/*.dll $RPM_BUILD_ROOT%{_datadir}/wine/windows/system/
+install wlib/*.dll $RPM_BUILD_ROOT%{_datadir}/wine/windows/system
 
 %clean
 rm -rf $RPM_BUILD_ROOT
