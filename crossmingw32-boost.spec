@@ -6,7 +6,7 @@ Version:	1.34.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
-Group:		Libraries
+Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
 # Source0-md5:	ed5b9291ffad776f8757a916e1726ad0
 Patch0:		%{name}-win.patch
@@ -29,8 +29,6 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		target		i386-mingw32
 %define		target_platform	i386-pc-mingw32
 %define		arch		%{_prefix}/%{target}
-%define		gccarch		%{_prefix}/lib/gcc-lib/%{target}
-%define		gcclib		%{_prefix}/lib/gcc-lib/%{target}/%{version}
 
 %define		__cc		%{target}-gcc
 %define		__cxx		%{target}-g++
