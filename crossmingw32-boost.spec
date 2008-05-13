@@ -99,29 +99,37 @@ LDSHARED="%{__cc} -shared" ; export LDSHARED
 TARGET="%{target}" ; export TARGET
 
 bjam \
-	-q -d2 --toolset=gcc \
-	--without-python --without-serialization --without-test \
-	variant=release threading=multi inlining=on debug-symbols=on \
-	-sBZIP2_BINARY=bzip2
+	-q -d2 \
+	-sBZIP2_BINARY=bzip2 \
+	--toolset=gcc \
+	--without-python \
+	--without-serialization \
+	--without-test \
+	variant=release \
+	debug-symbols=on \
+	inlining=on \
+	link=static,shared \
+	threading=multi \
+	threadapi=win32
 
 mkdir wlib
-cd bin.v2/*
+cd bin.v2/libs
 for i in *
 do
-        cd $i/*/*/*/*/*
-        cd link-static/*
-        $AR cru ../../../../../../../../../../wlib/libboost_$i.a *\.o
-        $RANLIB ../../../../../../../../../../wlib/libboost_$i.a
+        cd $i/build/gcc-mingw-*/release/debug-symbols-on/inlining-on
+        cd link-static/threadapi-win32/threading-multi
+        $AR cru ../../../../../../../../../../../wlib/libboost_$i.a *.o
+        $RANLIB ../../../../../../../../../../../wlib/libboost_$i.a
 
-        cd ../..
+        cd ../../..
 
         # if there is threading-multi dir 
         # it's content is used for dll and implib
-        dll_dir='link-static/*'
-        up_dir='../..'
+        dll_dir='link-static/threadapi-win32/threading-multi'
+        up_dir='../../..'
         if [ -d threading-multi ]; then
-                dll_dir='threading-multi'
-                up_dir='./..'
+                dll_dir='threadapi-win32/threading-multi'
+                up_dir='../..'
         fi
 
         cd $dll_dir
@@ -135,7 +143,7 @@ do
 
         # there are some issuses with dynamic libboost_wave
         if [ $i != "wave" ]; then
-                $CXX --shared *\.o $additional_so_params \
+                $CXX --shared *.o $additional_so_params \
                         -Wl,--enable-auto-image-base \
                         -o $up_dir/../../../../../../../../wlib/boost_$i.dll \
                         -Wl,--out-implib,libboost_$i.dll.a
