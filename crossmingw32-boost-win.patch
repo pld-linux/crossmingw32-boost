@@ -1,17 +1,17 @@
---- boost_1_34_0/tools/build/v2/util/os.jam.org	2007-06-16 15:29:24.717971888 +0200
-+++ boost_1_34_0/tools/build/v2/util/os.jam	2007-06-16 15:31:19.139516164 +0200
-@@ -117,22 +117,7 @@
+--- boost_1_35_0/tools/build/v2/util/os.jam.org	2007-06-16 15:29:24.717971888 +0200
++++ boost_1_35_0/tools/build/v2/util/os.jam	2007-06-16 15:31:19.139516164 +0200
+@@ -129,22 +129,7 @@
  # Returns true if running on windows, whether in cygwin or not.
- rule on-windows 
+ rule on-windows ( )
  {
 -    local result ;
--    if [ modules.peek : NT ] 
+-    if [ modules.peek : NT ]
 -    {
 -        result = true ;
 -    }
--    else if [ modules.peek : UNIX ] 
+-    else if [ modules.peek : UNIX ]
 -    {
--        switch [ modules.peek : JAMUNAME ] 
+-        switch [ modules.peek : JAMUNAME ]
 -        {
 -            case CYGWIN* :
 -            {
@@ -23,17 +23,17 @@
 +    return true ;
  }
  
- if ! [ on-windows ] 
---- boost_1_34_0/tools/build/v2/tools/gcc.jam.org	2007-06-16 15:32:31.064543550 +0200
-+++ boost_1_34_0/tools/build/v2/tools/gcc.jam	2007-06-16 15:32:37.304591591 +0200
-@@ -308,7 +308,7 @@
-     # Yet another alternative would be to create propagated <sharedable> 
-     # feature, and set it when building shared libraries, but that's hard
-     # to implement and will increase target path length even more.
+ 
+--- boost_1_35_0/tools/build/v2/tools/gcc.jam.org	2007-06-16 15:32:31.064543550 +0200
++++ boost_1_35_0/tools/build/v2/tools/gcc.jam	2007-06-16 15:32:37.304591591 +0200
+@@ -325,7 +325,7 @@
+     # Yet another alternative would be to create propagated <sharedable>
+     # feature, and set it when building shared libraries, but that's hard to
+     # implement and will increase target path length even more.
 -    flags gcc.compile OPTIONS <link>shared : -fPIC ;
 +    #flags gcc.compile OPTIONS <link>shared : -fPIC ;
- }    
- if [ os.name ] != NT && [ os.name ] != OSF
+ }
+ if [ os.name ] != NT && [ os.name ] != OSF && [ os.name ] != HPUX
  {
 --- boost_1_34_0/tools/build/v2/user-config.jam.old	2007-06-16 15:41:42.129475139 +0200
 +++ boost_1_34_0/tools/build/v2/user-config.jam	2007-06-16 15:41:48.558494352 +0200
