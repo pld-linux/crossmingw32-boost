@@ -2,13 +2,13 @@
 Summary:	The Boost C++ Libraries - Mingw32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
-Version:	1.34.0
+Version:	1.35.0
 %define	fver	%(echo %{version} | tr . _)
-Release:	1
+Release:	0.1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	ed5b9291ffad776f8757a916e1726ad0
+# Source0-md5:	dce952a7214e72d6597516bcac84048b
 Patch0:		%{name}-win.patch
 URL:		http://www.boost.org/
 BuildRequires:	boost-jam
@@ -28,13 +28,17 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
 %define		target		i386-mingw32
 %define		target_platform	i386-pc-mingw32
-%define		arch		%{_prefix}/%{target}
+
+%define		_sysprefix	/usr
+%define		_prefix		%{_sysprefix}/%{target}
+%define		_libdir		%{_prefix}/lib
+%define		_dlldir		/usr/share/wine/windows/system
 
 %define		__cc		%{target}-gcc
 %define		__cxx		%{target}-g++
 
-%ifarch alpha sparc sparc64 sparcv9
-# alpha's -mieee and sparc's -mtune=* are not valid for target's gcc
+%ifnarch %{ix86}
+# arch-specific flags (like alpha's -mieee) are not valid for i386 gcc
 %define		optflags	-O2
 %endif
 
@@ -57,18 +61,18 @@ już zostały zgłoszone do komitetu standaryzacyjnego C++ w nadchodzącym
 Raporcie Technicznym Biblioteki Standardowej C++
 
 %package dll
-Summary:	%{realname} - DLL libraries for Windows
-Summary(pl.UTF-8):	%{realname} - biblioteki DLL dla Windows
+Summary:	Boost - DLL libraries for Windows
+Summary(pl.UTF-8):	Boost - biblioteki DLL dla Windows
 Group:		Applications/Emulators
 Requires:	crossmingw32-bzip2-dll
 Requires:	crossmingw32-zlib-dll
 Requires:	wine
 
 %description dll
-%{realname} - DLL libraries for Windows.
+Boost - DLL libraries for Windows.
 
 %description dll -l pl.UTF-8
-%{realname} - biblioteki DLL dla Windows.
+Boost - biblioteki DLL dla Windows.
 
 %prep
 %setup -q -n %{realname}_%{fver}
@@ -78,18 +82,20 @@ Requires:	wine
 #   due to oversophisticated build flags system.
 %{__perl} -pi -e 's/ -O3 / %{rpmcxxflags} /' tools/build/v2/tools/gcc.jam
 
-find . -type f -exec sed -e 's/#error "wide char i\/o not supported on this platform"//' -i \{\} \;
+sed -i -e 's/#error "wide char i\/o not supported on this platform"//' \
+	boost/archive/*.hpp \
+	libs/serialization/src/*.cpp \
+	libs/serialization/test/*.hpp
 
 %build
-CC=%{target}-gcc ; export CC
-CXX=%{target}-g++ ; export CXX
+CC=%{__cc} ; export CC
+CXX=%{__cxx} ; export CXX
 LD=%{target}-ld ; export LD
 AR=%{target}-ar ; export AR
 AS=%{target}-as ; export AS
 CROSS_COMPILE=1 ; export CROSS_COMPILE
-CPPFLAGS="-I%{arch}/include" ; export CPPFLAGS
 RANLIB=%{target}-ranlib ; export RANLIB
-LDSHARED="%{target}-gcc -shared" ; export LDSHARED
+LDSHARED="%{__cc} -shared" ; export LDSHARED
 TARGET="%{target}" ; export TARGET
 
 bjam \
@@ -147,21 +153,20 @@ cd ../..
 
 %install
 rm -rf $RPM_BUILD_ROOT
-install -d $RPM_BUILD_ROOT%{arch}/{include,lib}
-install -d $RPM_BUILD_ROOT%{_datadir}/wine/windows/system
+install -d $RPM_BUILD_ROOT{%{_includedir},%{_libdir},%{_dlldir}}
 
-cp -r boost $RPM_BUILD_ROOT%{arch}/include
-install wlib/*.a $RPM_BUILD_ROOT%{arch}/lib
-install wlib/*.dll $RPM_BUILD_ROOT%{_datadir}/wine/windows/system
+cp -r boost $RPM_BUILD_ROOT%{_includedir}
+install wlib/*.a $RPM_BUILD_ROOT%{_libdir}
+install wlib/*.dll $RPM_BUILD_ROOT%{_dlldir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%{arch}/include/boost
-%{arch}/lib/*
+%{_includedir}/boost
+%{_libdir}/*.a
 
 %files dll
 %defattr(644,root,root,755)
-%{_datadir}/wine/windows/system/*
+%{_dlldir}/*.dll
