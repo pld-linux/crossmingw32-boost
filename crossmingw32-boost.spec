@@ -2,16 +2,16 @@
 Summary:	The Boost C++ Libraries - Mingw32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
-Version:	1.35.0
+Version:	1.36.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	0.1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	dce952a7214e72d6597516bcac84048b
+# Source0-md5:	328bfec66c312150e4c2a78dcecb504b
 Patch0:		%{name}-win.patch
 URL:		http://www.boost.org/
-BuildRequires:	boost-jam
+BuildRequires:	boost-jam >= 3.1.12
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-runtime
