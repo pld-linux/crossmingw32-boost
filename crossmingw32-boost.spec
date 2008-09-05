@@ -4,7 +4,7 @@ Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
 Version:	1.36.0
 %define	fver	%(echo %{version} | tr . _)
-Release:	0.1
+Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
@@ -18,7 +18,6 @@ BuildRequires:	crossmingw32-runtime
 BuildRequires:	crossmingw32-w32api
 BuildRequires:	crossmingw32-zlib
 BuildRequires:	libtool >= 2:1.4d
-BuildRequires:	perl-base
 Requires:	crossmingw32-bzip2
 Requires:	crossmingw32-runtime
 Requires:	crossmingw32-zlib
@@ -78,14 +77,8 @@ Boost - biblioteki DLL dla Windows.
 %setup -q -n %{realname}_%{fver}
 %patch0 -p1
 
-# - don't know how to pass it through (b)jam -s (no way?)
-#   due to oversophisticated build flags system.
-%{__perl} -pi -e 's/ -O3 / %{rpmcxxflags} /' tools/build/v2/tools/gcc.jam
-
-sed -i -e 's/#error "wide char i\/o not supported on this platform"//' \
-	boost/archive/*.hpp \
-	libs/serialization/src/*.cpp \
-	libs/serialization/test/*.hpp
+echo 'using gcc : : i386-mingw32-g++ : <cxxflags>"%{rpmcxxflags}" ;' \
+	>tools/build/v2/user-config.jam
 
 %build
 CC=%{__cc} ; export CC
@@ -109,50 +102,13 @@ bjam \
 	debug-symbols=on \
 	inlining=on \
 	link=static,shared \
+	target-os=windows \
 	threading=multi \
 	threadapi=win32
 
 mkdir wlib
-cd bin.v2/libs
-for i in *
-do
-        cd $i/build/gcc-mingw-*/release/debug-symbols-on/inlining-on
-        cd link-static/threadapi-win32/threading-multi
-        $AR cru ../../../../../../../../../../../wlib/libboost_$i.a *.o
-        $RANLIB ../../../../../../../../../../../wlib/libboost_$i.a
-
-        cd ../../..
-
-        # if there is threading-multi dir 
-        # it's content is used for dll and implib
-        dll_dir='link-static/threadapi-win32/threading-multi'
-        up_dir='../../..'
-        if [ -d threading-multi ]; then
-                dll_dir='threadapi-win32/threading-multi'
-                up_dir='../..'
-        fi
-
-        cd $dll_dir
-
-        # libboost_iostreams requires additional
-        # libraries
-        additional_so_params=
-        if [ $i = "iostreams" ]; then
-                additional_so_params="-lz.dll -lbzip2.dll"
-        fi
-
-        # there are some issuses with dynamic libboost_wave
-        if [ $i != "wave" ]; then
-                $CXX --shared *.o $additional_so_params \
-                        -Wl,--enable-auto-image-base \
-                        -o $up_dir/../../../../../../../../wlib/boost_$i.dll \
-                        -Wl,--out-implib,libboost_$i.dll.a
-                mv libboost_$i.dll.a $up_dir/../../../../../../../../wlib/
-        fi
-
-        cd $up_dir/../../../../../..
-done
-cd ../..
+find bin.v2/libs -name '*.a' -exec cp '{}' wlib \;
+find bin.v2/libs -name '*.dll' -exec cp '{}' wlib \;
 
 %if 0%{!?debug:1}
 %{target}-strip wlib/*.dll
