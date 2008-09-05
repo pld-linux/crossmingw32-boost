@@ -24,25 +24,52 @@
  }
  
  
---- boost_1_35_0/tools/build/v2/tools/gcc.jam.org	2007-06-16 15:32:31.064543550 +0200
-+++ boost_1_35_0/tools/build/v2/tools/gcc.jam	2007-06-16 15:32:37.304591591 +0200
-@@ -325,7 +325,7 @@
+--- boost_1_36_0/tools/build/v2/tools/gcc.jam.orig	2008-07-15 13:53:41.000000000 +0000
++++ boost_1_36_0/tools/build/v2/tools/gcc.jam	2008-08-22 22:16:56.279893472 +0000
+@@ -288,7 +288,7 @@
+ 
+ # Declare flags and action for compilation
+ flags gcc.compile OPTIONS <optimization>off   : -O0 ;
+-flags gcc.compile OPTIONS <optimization>speed : -O3 ;
++flags gcc.compile OPTIONS <optimization>speed : ;
+ flags gcc.compile OPTIONS <optimization>space : -Os ;
+ 
+ flags gcc.compile OPTIONS <inlining>off  : -fno-inline ;
+@@ -329,7 +329,7 @@
      # Yet another alternative would be to create propagated <sharedable>
      # feature, and set it when building shared libraries, but that's hard to
      # implement and will increase target path length even more.
 -    flags gcc.compile OPTIONS <link>shared : -fPIC ;
 +    #flags gcc.compile OPTIONS <link>shared : -fPIC ;
  }
- if [ os.name ] != NT && [ os.name ] != OSF && [ os.name ] != HPUX
+ if [ os.name ] != NT && [ os.name ] != OSF && [ os.name ] != HPUX && [ os.name ] != AIX
  {
---- boost_1_36_0/tools/build/v2/user-config.jam.orig	2008-07-15 15:53:41.000000000 +0200
-+++ boost_1_36_0/tools/build/v2/user-config.jam	2008-08-23 09:29:58.862617801 +0200
-@@ -40,7 +40,7 @@
- # ------------------
+--- boost_1_36_0/tools/build/v2/tools/types/lib.jam.org	2007-11-15 16:31:06.000000000 +0000
++++ boost_1_36_0/tools/build/v2/tools/types/lib.jam	2008-08-22 21:31:32.499955860 +0000
+@@ -18,12 +18,11 @@
+ type.set-generated-target-prefix STATIC_LIB : : lib ;
  
- # Configure gcc (default version).
--# using gcc ;
-+using gcc : : i386-mingw32-g++ : ;
+ type IMPORT_LIB : : STATIC_LIB ;
+-type.set-generated-target-suffix IMPORT_LIB : : lib ;
+-type.set-generated-target-prefix IMPORT_LIB : : "" ;
++type.set-generated-target-suffix IMPORT_LIB : : dll.a ;
++type.set-generated-target-prefix IMPORT_LIB : : lib ;
  
- # Configure specific gcc version, giving alternative name to use.
- # using gcc : 3.2 : g++-3.2 ;
+-type SHARED_LIB : dll : LIB : NT CYGWIN ;
+-type SHARED_LIB : dylib : LIB : MACOSX ;
+-type SHARED_LIB : so : LIB ;
++type SHARED_LIB : : LIB ;
++type.set-generated-target-suffix SHARED_LIB : : dll ;
+ 
+ type SEARCHED_LIB : : LIB ;
+ # This is needed so that when we create a target of SEARCHED_LIB
+--- boost_1_36_0/libs/math/build/Jamfile.v2.org	2008-08-22 14:35:44.643893747 +0000
++++ boost_1_36_0/libs/math/build/Jamfile.v2	2008-08-22 14:36:11.767894179 +0000
+@@ -16,7 +16,6 @@
+ fmax
+ fmin
+ fpclassify
+-hypot
+ lgamma
+ llround
+ log1p
