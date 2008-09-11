@@ -17,7 +17,6 @@ BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-runtime
 BuildRequires:	crossmingw32-w32api
 BuildRequires:	crossmingw32-zlib
-BuildRequires:	libtool >= 2:1.4d
 Requires:	crossmingw32-bzip2
 Requires:	crossmingw32-runtime
 Requires:	crossmingw32-zlib
@@ -59,6 +58,18 @@ współpracują ze standardową biblioteką C++. Celem jest ustanowienie
 już zostały zgłoszone do komitetu standaryzacyjnego C++ w nadchodzącym
 Raporcie Technicznym Biblioteki Standardowej C++
 
+%package static
+Summary:	Static Boost libraries (cross mingw32 version)
+Summary(pl.UTF-8):	Statyczne biblioteki Boost (wersja skrośna mingw32)
+Group:		Development/Libraries
+Requires:	%{name} = %{version}-%{release}
+
+%description static
+Static Boost libraries (cross mingw32 version).
+
+%description static -l pl.UTF-8
+Statyczne biblioteki Boost (wersja skrośna mingw32).
+
 %package dll
 Summary:	Boost - DLL libraries for Windows
 Summary(pl.UTF-8):	Boost - biblioteki DLL dla Windows
@@ -77,19 +88,16 @@ Boost - biblioteki DLL dla Windows.
 %setup -q -n %{realname}_%{fver}
 %patch0 -p1
 
-echo 'using gcc : : i386-mingw32-g++ : <cxxflags>"%{rpmcxxflags}" ;' \
+echo 'using gcc : : %{target}-g++ : <cxxflags>"%{rpmcxxflags}" ;' \
 	>tools/build/v2/user-config.jam
 
 %build
-CC=%{__cc} ; export CC
-CXX=%{__cxx} ; export CXX
+CC="%{__cc}" ; export CC
+CXX="%{__cxx}" ; export CXX
 LD=%{target}-ld ; export LD
 AR=%{target}-ar ; export AR
 AS=%{target}-as ; export AS
-CROSS_COMPILE=1 ; export CROSS_COMPILE
 RANLIB=%{target}-ranlib ; export RANLIB
-LDSHARED="%{__cc} -shared" ; export LDSHARED
-TARGET="%{target}" ; export TARGET
 
 bjam \
 	-q -d2 \
@@ -128,9 +136,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
+%{_libdir}/libboost_*-mgw*-mt-1_36.dll.a
 %{_includedir}/boost
-%{_libdir}/*.a
+
+%files static
+%defattr(644,root,root,755)
+%{_libdir}/libboost_*-mgw*-mt-1_36.a
 
 %files dll
 %defattr(644,root,root,755)
-%{_dlldir}/*.dll
+%{_dlldir}/boost_*-mgw*-mt-1_36.dll
