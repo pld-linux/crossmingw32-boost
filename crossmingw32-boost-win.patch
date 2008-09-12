@@ -73,3 +73,39 @@
  lgamma
  llround
  log1p
+--- boost_1_36_0/libs/serialization/build/Jamfile.v2.org	2008-09-12 15:45:07.687194514 +0200
++++ boost_1_36_0/libs/serialization/build/Jamfile.v2	2008-09-12 15:45:24.963192239 +0200
+@@ -76,19 +76,6 @@
+     xml_oarchive
+ ;
+     
+-WSOURCES = 
+-    basic_text_wiprimitive
+-    basic_text_woprimitive
+-    text_wiarchive
+-    text_woarchive
+-    utf8_codecvt_facet
+-    xml_wgrammar
+-    xml_wiarchive
+-    xml_woarchive
+-    codecvt_null
+-;
+-
+-
+ lib boost_serialization 
+     : $(SOURCES).cpp
+     : 
+@@ -96,12 +83,4 @@
+     <link>shared:<define>BOOST_SERIALIZATION_DYN_LINK=1
+     ;
+ 
+-lib boost_wserialization 
+-    : $(WSOURCES).cpp boost_serialization 
+-    :     
+-    <toolset>msvc:<cxxflags>/Gy 
+-    <dependency>../../config/test/all//BOOST_NO_STD_WSTREAMBUF
+-    <link>shared:<define>BOOST_SERIALIZATION_DYN_LINK=1
+-    ;
+-
+-boost-install boost_serialization boost_wserialization ;
++boost-install boost_serialization ;
