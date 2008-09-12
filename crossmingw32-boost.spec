@@ -1,3 +1,7 @@
+#
+# Conditional build:
+%bcond_with	serialization	# enable Boost Serialization
+#
 %define		realname	boost
 Summary:	The Boost C++ Libraries - Mingw32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
@@ -17,6 +21,7 @@ BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-runtime
 BuildRequires:	crossmingw32-w32api
 BuildRequires:	crossmingw32-zlib
+%{?with_serialization:BuildRequires:	wine-programs}
 Requires:	crossmingw32-bzip2
 Requires:	crossmingw32-runtime
 Requires:	crossmingw32-zlib
@@ -92,6 +97,12 @@ echo 'using gcc : : %{target}-g++ : <cxxflags>"%{rpmcxxflags}" ;' \
 	>tools/build/v2/user-config.jam
 
 %build
+%if %{with serialization}
+export WINEPREFIX=`pwd`/wineprefix
+wineprefixcreate
+cp %{_prefix}/bin/mingwm10.dll wineprefix/drive_c/windows/system32/
+%endif
+
 CC="%{__cc}" ; export CC
 CXX="%{__cxx}" ; export CXX
 LD=%{target}-ld ; export LD
@@ -104,7 +115,7 @@ bjam \
 	-sBZIP2_BINARY=bzip2 \
 	--toolset=gcc \
 	--without-python \
-	--without-serialization \
+	%{!?with_serialization:--without-serialization} \
 	--without-test \
 	variant=release \
 	debug-symbols=on \
