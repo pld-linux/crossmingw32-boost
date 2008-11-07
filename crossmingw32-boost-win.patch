@@ -24,29 +24,26 @@
  }
  
  
---- boost_1_36_0/tools/build/v2/tools/gcc.jam.orig	2008-07-15 13:53:41.000000000 +0000
-+++ boost_1_36_0/tools/build/v2/tools/gcc.jam	2008-08-22 22:16:56.279893472 +0000
-@@ -288,7 +288,7 @@
+--- boost_1_37_0/tools/build/v2/tools/gcc.jam.orig	2008-10-16 10:42:03.000000000 +0200
++++ boost_1_37_0/tools/build/v2/tools/gcc.jam	2008-11-06 20:59:27.405556275 +0100
+@@ -292,7 +292,7 @@
  
- # Declare flags and action for compilation
- flags gcc.compile OPTIONS <optimization>off   : -O0 ;
--flags gcc.compile OPTIONS <optimization>speed : -O3 ;
-+flags gcc.compile OPTIONS <optimization>speed : ;
- flags gcc.compile OPTIONS <optimization>space : -Os ;
+ # Declare flags and action for compilation.
+ toolset.flags gcc.compile OPTIONS <optimization>off   : -O0 ;
+-toolset.flags gcc.compile OPTIONS <optimization>speed : -O3 ;
++toolset.flags gcc.compile OPTIONS <optimization>speed : ;
+ toolset.flags gcc.compile OPTIONS <optimization>space : -Os ;
  
- flags gcc.compile OPTIONS <inlining>off  : -fno-inline ;
-@@ -329,7 +329,7 @@
-     # Yet another alternative would be to create propagated <sharedable>
-     # feature, and set it when building shared libraries, but that's hard to
-     # implement and will increase target path length even more.
--    flags gcc.compile OPTIONS <link>shared : -fPIC ;
-+    #flags gcc.compile OPTIONS <link>shared : -fPIC ;
- }
- if [ os.name ] != NT && [ os.name ] != OSF && [ os.name ] != HPUX && [ os.name ] != AIX
- {
---- boost_1_36_0/tools/build/v2/tools/types/lib.jam.org	2007-11-15 16:31:06.000000000 +0000
-+++ boost_1_36_0/tools/build/v2/tools/types/lib.jam	2008-08-22 21:31:32.499955860 +0000
-@@ -18,12 +18,11 @@
+ toolset.flags gcc.compile OPTIONS <inlining>off  : -fno-inline ;
+--- boost_1_37_0/tools/build/v2/tools/types/lib.jam.orig	2008-10-16 10:42:03.000000000 +0200
++++ boost_1_37_0/tools/build/v2/tools/types/lib.jam	2008-11-06 21:01:59.897548732 +0100
+@@ -9,13 +9,13 @@
+ # platforms.
+ type.register STATIC_LIB : a lib : LIB ;
+ 
+-type.set-generated-target-suffix STATIC_LIB : <target-os>windows : lib ;
++type.set-generated-target-suffix STATIC_LIB : <target-os>windows : a ;
+ type.set-generated-target-suffix STATIC_LIB : <target-os>cygwin : lib ;
  type.set-generated-target-prefix STATIC_LIB : : lib ;
  
  type IMPORT_LIB : : STATIC_LIB ;
@@ -55,14 +52,8 @@
 +type.set-generated-target-suffix IMPORT_LIB : : dll.a ;
 +type.set-generated-target-prefix IMPORT_LIB : : lib ;
  
--type SHARED_LIB : dll : LIB : NT CYGWIN ;
--type SHARED_LIB : dylib : LIB : MACOSX ;
--type SHARED_LIB : so : LIB ;
-+type SHARED_LIB : : LIB ;
-+type.set-generated-target-suffix SHARED_LIB : : dll ;
- 
- type SEARCHED_LIB : : LIB ;
- # This is needed so that when we create a target of SEARCHED_LIB
+ type.register SHARED_LIB : so dll dylib : LIB ;
+ type.set-generated-target-suffix SHARED_LIB : <target-os>windows : dll ;
 --- boost_1_36_0/libs/math/build/Jamfile.v2.org	2008-08-22 14:35:44.643893747 +0000
 +++ boost_1_36_0/libs/math/build/Jamfile.v2	2008-08-22 14:36:11.767894179 +0000
 @@ -16,7 +16,6 @@
@@ -73,9 +64,9 @@
  lgamma
  llround
  log1p
---- boost_1_36_0/libs/serialization/build/Jamfile.v2.org	2008-09-12 15:45:07.687194514 +0200
-+++ boost_1_36_0/libs/serialization/build/Jamfile.v2	2008-09-12 15:45:24.963192239 +0200
-@@ -76,19 +76,6 @@
+--- boost_1_37_0/libs/serialization/build/Jamfile.v2.orig	2008-10-07 07:34:46.000000000 +0200
++++ boost_1_37_0/libs/serialization/build/Jamfile.v2	2008-11-06 21:02:41.401548732 +0100
+@@ -80,19 +80,6 @@
      xml_oarchive
  ;
      
@@ -95,7 +86,7 @@
  lib boost_serialization 
      : $(SOURCES).cpp
      : 
-@@ -96,12 +83,4 @@
+@@ -100,11 +87,4 @@
      <link>shared:<define>BOOST_SERIALIZATION_DYN_LINK=1
      ;
  
@@ -103,9 +94,10 @@
 -    : $(WSOURCES).cpp boost_serialization 
 -    :     
 -    <toolset>msvc:<cxxflags>/Gy 
--    <dependency>../../config/test/all//BOOST_NO_STD_WSTREAMBUF
 -    <link>shared:<define>BOOST_SERIALIZATION_DYN_LINK=1
 -    ;
 -
 -boost-install boost_serialization boost_wserialization ;
 +boost-install boost_serialization ;
+--- boost_1_37_0/tools/build/v2/tools/types/lib.jam.orig	2008-11-06 23:30:46.449560465 +0100
++++ boost_1_37_0/tools/build/v2/tools/types/lib.jam	2008-11-07 06:59:38.737552084 +0100
