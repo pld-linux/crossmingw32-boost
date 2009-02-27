@@ -6,13 +6,13 @@
 Summary:	The Boost C++ Libraries - Mingw32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
-Version:	1.37.0
+Version:	1.38.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	8d9f990bfb7e83769fa5f1d6f065bc92
+# Source0-md5:	5eca2116d39d61382b8f8235915cb267
 Patch0:		%{name}-win.patch
 URL:		http://www.boost.org/
 BuildRequires:	boost-jam >= 3.1.12
@@ -61,7 +61,7 @@ współpracują ze standardową biblioteką C++. Celem jest ustanowienie
 "istniejącej praktyki" i dostarczenie implementacji, tak że biblioteki
 "Boost" nadają się do ewentualnej standaryzacji. Niektóre z bibliotek
 już zostały zgłoszone do komitetu standaryzacyjnego C++ w nadchodzącym
-Raporcie Technicznym Biblioteki Standardowej C++
+Raporcie Technicznym Biblioteki Standardowej C++.
 
 %package static
 Summary:	Static Boost libraries (cross mingw32 version)
@@ -147,13 +147,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%{_libdir}/libboost_*-mgw*-mt-1_37.dll.a
+%{_libdir}/libboost_*-mgw*-mt-1_38.dll.a
 %{_includedir}/boost
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/libboost_*-mgw*-mt-1_37.a
+%{_libdir}/libboost_*-mgw*-mt-1_38.a
 
 %files dll
 %defattr(644,root,root,755)
-%{_dlldir}/boost_*-mgw*-mt-1_37.dll
+%{_dlldir}/boost_*-mgw*-mt-1_38.dll
