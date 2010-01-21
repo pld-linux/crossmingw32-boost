@@ -6,13 +6,13 @@
 Summary:	The Boost C++ Libraries - Mingw32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
 Name:		crossmingw32-%{realname}
-Version:	1.38.0
+Version:	1.41.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://dl.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	5eca2116d39d61382b8f8235915cb267
+# Source0-md5:	8bb65e133907db727a2a825c5400d0a6
 Patch0:		%{name}-win.patch
 URL:		http://www.boost.org/
 BuildRequires:	boost-jam >= 3.1.12
@@ -93,8 +93,8 @@ Boost - biblioteki DLL dla Windows.
 %setup -q -n %{realname}_%{fver}
 %patch0 -p1
 
-echo 'using gcc : : %{target}-g++ : <cxxflags>"%{rpmcxxflags}" ;' \
-	>tools/build/v2/user-config.jam
+echo 'using gcc : : %{target}-g++ : <cxxflags>"%{rpmcxxflags}"' \
+	'<archiver>%{target}-ar ;' >tools/build/v2/user-config.jam
 
 %build
 %if %{with serialization}
@@ -103,15 +103,9 @@ wineprefixcreate
 cp %{_prefix}/bin/mingwm10.dll wineprefix/drive_c/windows/system32/
 %endif
 
-CC="%{__cc}" ; export CC
-CXX="%{__cxx}" ; export CXX
-LD=%{target}-ld ; export LD
-AR=%{target}-ar ; export AR
-AS=%{target}-as ; export AS
-RANLIB=%{target}-ranlib ; export RANLIB
-
 bjam \
 	-q -d2 \
+	--layout=versioned \
 	-sBZIP2_BINARY=bzip2 \
 	--toolset=gcc \
 	--without-python \
@@ -147,13 +141,13 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%{_libdir}/libboost_*-mgw*-mt-1_38.dll.a
+%{_libdir}/libboost_*-mgw*-mt-*.dll.a
 %{_includedir}/boost
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/libboost_*-mgw*-mt-1_38.a
+%{_libdir}/libboost_*-mgw*-mt-*.a
 
 %files dll
 %defattr(644,root,root,755)
-%{_dlldir}/boost_*-mgw*-mt-1_38.dll
+%{_dlldir}/boost_*-mgw*-mt-*.dll
