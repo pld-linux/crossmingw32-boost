@@ -1,0 +1,5 @@
+- rel 1 (builds, seems to work)
+- using boost way for configuration (dropped perl hackery)
+- dropped some more sed hackery
+- using boost way for linking (dropped custom script)
+- using boost naming scheme (with version and compiler)
