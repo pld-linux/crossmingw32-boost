@@ -3,17 +3,16 @@
 %bcond_with	serialization	# enable Boost Serialization
 #
 %define		realname	boost
-Summary:	The Boost C++ Libraries - Mingw32 cross version
-Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla Mingw32
+Summary:	The Boost C++ Libraries - MinGW32 cross version
+Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	1.41.0
+Version:	1.44.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
-Source0:	http://dl.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	8bb65e133907db727a2a825c5400d0a6
-Patch0:		%{name}-win.patch
+Source0:	http://downloads.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
+# Source0-md5:	f02578f5218f217a9f20e9c30e119c6a
 URL:		http://www.boost.org/
 BuildRequires:	boost-jam >= 3.1.12
 BuildRequires:	crossmingw32-bzip2
@@ -64,16 +63,16 @@ już zostały zgłoszone do komitetu standaryzacyjnego C++ w nadchodzącym
 Raporcie Technicznym Biblioteki Standardowej C++.
 
 %package static
-Summary:	Static Boost libraries (cross mingw32 version)
-Summary(pl.UTF-8):	Statyczne biblioteki Boost (wersja skrośna mingw32)
+Summary:	Static Boost libraries (cross MinGW32 version)
+Summary(pl.UTF-8):	Statyczne biblioteki Boost (wersja skrośna MinGW32)
 Group:		Development/Libraries
 Requires:	%{name} = %{version}-%{release}
 
 %description static
-Static Boost libraries (cross mingw32 version).
+Static Boost libraries (cross MinGW32 version).
 
 %description static -l pl.UTF-8
-Statyczne biblioteki Boost (wersja skrośna mingw32).
+Statyczne biblioteki Boost (wersja skrośna MinGW32).
 
 %package dll
 Summary:	Boost - DLL libraries for Windows
@@ -91,7 +90,6 @@ Boost - biblioteki DLL dla Windows.
 
 %prep
 %setup -q -n %{realname}_%{fver}
-%patch0 -p1
 
 echo 'using gcc : : %{target}-g++ : <cxxflags>"%{rpmcxxflags}"' \
 	'<archiver>%{target}-ar ;' >tools/build/v2/user-config.jam
@@ -104,7 +102,7 @@ cp %{_prefix}/bin/mingwm10.dll wineprefix/drive_c/windows/system32/
 %endif
 
 bjam \
-	-q -d2 \
+	-d2 \
 	--layout=versioned \
 	-sBZIP2_BINARY=bzip2 \
 	--toolset=gcc \
@@ -119,13 +117,9 @@ bjam \
 	threading=multi \
 	threadapi=win32
 
-mkdir wlib
-find bin.v2/libs -name '*.a' -exec cp '{}' wlib \;
-find bin.v2/libs -name '*.dll' -exec cp '{}' wlib \;
-
 %if 0%{!?debug:1}
-%{target}-strip wlib/*.dll
-%{target}-strip -g -R.comment -R.note wlib/*.a
+%{target}-strip stage/lib/*.dll
+%{target}-strip -g -R.comment -R.note stage/lib/*.a
 %endif
 
 %install
@@ -133,21 +127,23 @@ rm -rf $RPM_BUILD_ROOT
 install -d $RPM_BUILD_ROOT{%{_includedir},%{_libdir},%{_dlldir}}
 
 cp -r boost $RPM_BUILD_ROOT%{_includedir}
-install wlib/*.a $RPM_BUILD_ROOT%{_libdir}
-install wlib/*.dll $RPM_BUILD_ROOT%{_dlldir}
+cp -a stage/lib/*.a $RPM_BUILD_ROOT%{_libdir}
+install stage/lib/*.dll $RPM_BUILD_ROOT%{_dlldir}
 
 %clean
 rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%{_libdir}/libboost_*-mgw*-mt-*.dll.a
+%{_libdir}/libboost_*-mgw*-mt-1_44.dll.a
+%{_libdir}/libboost_*-mgw*-mt.dll.a
 %{_includedir}/boost
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/libboost_*-mgw*-mt-*.a
+%{_libdir}/libboost_*-mgw*-mt-1_44.a
+%{_libdir}/libboost_*-mgw*-mt.a
 
 %files dll
 %defattr(644,root,root,755)
-%{_dlldir}/boost_*-mgw*-mt-*.dll
+%{_dlldir}/libboost_*-mgw*-mt-*.dll
