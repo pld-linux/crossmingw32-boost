@@ -97,8 +97,8 @@ echo 'using gcc : : %{target}-g++ : <cxxflags>"%{rpmcxxflags}"' \
 %build
 %if %{with serialization}
 export WINEPREFIX=`pwd`/wineprefix
-wineprefixcreate
-cp %{_prefix}/bin/mingwm10.dll wineprefix/drive_c/windows/system32/
+install -d wineprefix/drive_c/windows/system32
+install %{_prefix}/bin/mingwm10.dll wineprefix/drive_c/windows/system32/
 %endif
 
 bjam \
