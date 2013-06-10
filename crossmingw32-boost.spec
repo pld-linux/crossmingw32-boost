@@ -6,15 +6,14 @@
 Summary:	The Boost C++ Libraries - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	1.44.0
+Version:	1.53.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://downloads.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	f02578f5218f217a9f20e9c30e119c6a
+# Source0-md5:	a00d22605d5dbcfb4c9936a9b35bc4c2
 URL:		http://www.boost.org/
-BuildRequires:	boost-jam >= 3.1.12
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-runtime
@@ -101,14 +100,17 @@ install -d wineprefix/drive_c/windows/system32
 install %{_prefix}/bin/mingwm10.dll wineprefix/drive_c/windows/system32/
 %endif
 
-bjam \
+./bootstrap.sh --prefix=%{_prefix}
+./b2 \
 	-d2 \
+	-j %{__jobs} \
 	--layout=versioned \
 	-sBZIP2_BINARY=bzip2 \
-	--toolset=gcc \
+	toolset=gcc \
 	--without-python \
 	%{!?with_serialization:--without-serialization} \
 	--without-test \
+	--without-context \
 	variant=release \
 	debug-symbols=on \
 	inlining=on \
@@ -135,14 +137,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%{_libdir}/libboost_*-mgw*-mt-1_44.dll.a
-%{_libdir}/libboost_*-mgw*-mt.dll.a
+%{_libdir}/libboost_*-mgw*-mt-*.dll.a
 %{_includedir}/boost
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/libboost_*-mgw*-mt-1_44.a
-%{_libdir}/libboost_*-mgw*-mt.a
+%{_libdir}/libboost_*-mgw*-mt-*1_53.a
 
 %files dll
 %defattr(644,root,root,755)
