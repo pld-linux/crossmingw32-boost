@@ -95,8 +95,10 @@ Boost - biblioteki DLL dla Windows.
 %prep
 %setup -q -n %{realname}_%{fver}
 
-echo 'using gcc : : %{target}-g++ : <cxxflags>"%{rpmcxxflags}"' \
-	'<archiver>%{target}-ar ;' >tools/build/v2/user-config.jam
+echo 'using gcc : : %{target}-g++ : ' \
+	'<cxxflags>"%{rpmcxxflags}"' \
+	'<archiver>%{target}-ar' \
+	'<rc>%{target}-windres ;' >tools/build/v2/user-config.jam
 
 # use Windows Message Compiler, not Midnight Commander
 %{__sed} -i -e 's,mc $(MCFLAGS),%{target}-windmc $(MCFLAGS),' tools/build/v2/tools/mc.jam
