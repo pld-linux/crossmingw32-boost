@@ -1,6 +1,6 @@
 #
 # Conditional build:
-%bcond_with	context		# enable Boost Context [gas+PE combination not supported]
+%bcond_without	context		# Boost Context and dependent modules [gas+PE not supported by upstream]
 #
 %define		realname	boost
 Summary:	The Boost C++ Libraries - MinGW32 cross version
