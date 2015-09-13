@@ -6,13 +6,16 @@
 Summary:	The Boost C++ Libraries - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	1.55.0
+Version:	1.59.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://downloads.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	d6eef4b4cacb2183f2bf265a5a03a354
+# Source0-md5:	6aa9a5c6a4ca1016edd0ed1178e3cb87
+# https://github.com/boostorg/serialization/pull/19.patch
+Patch0:		boost-windows-decl.patch
+Patch1:		boost-context-mingw.patch
 URL:		http://www.boost.org/
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
@@ -46,7 +49,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		filterout_c	-f[-a-z0-9=]*
 %define		filterout_cxx	-f[-a-z0-9=]*
 
-%define		abi_tag		1_55
+%define		abi_tag		1_59
 
 %description
 The Boost web site provides free peer-reviewed portable C++ source
@@ -94,14 +97,16 @@ Boost - biblioteki DLL dla Windows.
 
 %prep
 %setup -q -n %{realname}_%{fver}
+%patch0 -p1
+%patch1 -p0
 
 echo 'using gcc : : %{target}-g++ : ' \
 	'<cxxflags>"%{rpmcxxflags}"' \
 	'<archiver>%{target}-ar' \
-	'<rc>%{target}-windres ;' >tools/build/v2/user-config.jam
+	'<rc>%{target}-windres ;' >tools/build/src/user-config.jam
 
 # use Windows Message Compiler, not Midnight Commander
-%{__sed} -i -e 's,mc $(MCFLAGS),%{target}-windmc $(MCFLAGS),' tools/build/v2/tools/mc.jam
+%{__sed} -i -e 's,mc $(MCFLAGS),%{target}-windmc $(MCFLAGS),' tools/build/src/tools/mc.jam
 
 %build
 ./bootstrap.sh --prefix=%{_prefix}
@@ -110,9 +115,11 @@ echo 'using gcc : : %{target}-g++ : ' \
 	%{_smp_mflags} \
 	-sBZIP2_BINARY=bzip2 \
 	--layout=versioned \
-	%{!?with_context:--without-context --without-coroutine} \
+	%{!?with_context:--without-context --without-coroutine --without-coroutine2} \
 	--without-python \
 	--without-test \
+	abi=ms \
+	binary-format=pe \
 	debug-symbols=on \
 	inlining=on \
 	link=static,shared \
@@ -142,6 +149,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/libboost_atomic-mgw*-mt-%{abi_tag}.dll.a
 %{_libdir}/libboost_chrono-mgw*-mt-%{abi_tag}.dll.a
+%{_libdir}/libboost_container-mgw*-mt-%{abi_tag}.dll.a
 %{?with_context:%{_libdir}/libboost_context-mgw*-mt-%{abi_tag}.dll.a}
 %{?with_context:%{_libdir}/libboost_coroutine-mgw*-mt-%{abi_tag}.dll.a}
 %{_libdir}/libboost_date_time-mgw*-mt-%{abi_tag}.dll.a
@@ -175,6 +183,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_libdir}/libboost_atomic-mgw*-mt-%{abi_tag}.a
 %{_libdir}/libboost_chrono-mgw*-mt-%{abi_tag}.a
+%{_libdir}/libboost_container-mgw*-mt-%{abi_tag}.a
 %{?with_context:%{_libdir}/libboost_context-mgw*-mt-%{abi_tag}.a}
 %{?with_context:%{_libdir}/libboost_coroutine-mgw*-mt-%{abi_tag}.a}
 %{_libdir}/libboost_date_time-mgw*-mt-%{abi_tag}.a
@@ -205,8 +214,9 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(644,root,root,755)
 %{_dlldir}/libboost_atomic-mgw*-mt-%{abi_tag}.dll
 %{_dlldir}/libboost_chrono-mgw*-mt-%{abi_tag}.dll
-%{?with_context:%{_libdir}/libboost_context-mgw*-mt-%{abi_tag}.dll}
-%{?with_context:%{_libdir}/libboost_coroutine-mgw*-mt-%{abi_tag}.dll}
+%{_dlldir}/libboost_container-mgw*-mt-%{abi_tag}.dll
+%{?with_context:%{_dlldir}/libboost_context-mgw*-mt-%{abi_tag}.dll}
+%{?with_context:%{_dlldir}/libboost_coroutine-mgw*-mt-%{abi_tag}.dll}
 %{_dlldir}/libboost_date_time-mgw*-mt-%{abi_tag}.dll
 %{_dlldir}/libboost_filesystem-mgw*-mt-%{abi_tag}.dll
 %{_dlldir}/libboost_graph-mgw*-mt-%{abi_tag}.dll
