@@ -1,21 +1,21 @@
+# TODO: fix serialization
 #
 # Conditional build:
 %bcond_without	context		# Boost Context and dependent modules [gas+PE not supported by upstream]
+%bcond_with	serialization	# Boost Serialization [broken for MinGW in 1.61: https://svn.boost.org/trac/boost/ticket/12205]
 #
 %define		realname	boost
 Summary:	The Boost C++ Libraries - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	1.59.0
+Version:	1.61.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://downloads.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	6aa9a5c6a4ca1016edd0ed1178e3cb87
-# https://github.com/boostorg/serialization/pull/19.patch
+# Source0-md5:	6095876341956f65f9d35939ccea1a9f
 Patch0:		boost-windows-decl.patch
-Patch1:		boost-context-mingw.patch
 URL:		http://www.boost.org/
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
@@ -49,7 +49,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		filterout_c	-f[-a-z0-9=]*
 %define		filterout_cxx	-f[-a-z0-9=]*
 
-%define		abi_tag		1_59
+%define		abi_tag		1_61
 
 %description
 The Boost web site provides free peer-reviewed portable C++ source
@@ -98,7 +98,6 @@ Boost - biblioteki DLL dla Windows.
 %prep
 %setup -q -n %{realname}_%{fver}
 %patch0 -p1
-%patch1 -p0
 
 echo 'using gcc : : %{target}-g++ : ' \
 	'<cxxflags>"%{rpmcxxflags}"' \
@@ -117,6 +116,7 @@ echo 'using gcc : : %{target}-g++ : ' \
 	--layout=versioned \
 	%{!?with_context:--without-context --without-coroutine --without-coroutine2} \
 	--without-python \
+	%{!?with_serialization:--without-serialization} \
 	--without-test \
 	abi=ms \
 	binary-format=pe \
@@ -168,15 +168,17 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_program_options-mgw*-mt-%{abi_tag}.dll.a
 %{_libdir}/libboost_random-mgw*-mt-%{abi_tag}.dll.a
 %{_libdir}/libboost_regex-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_serialization-mgw*-mt-%{abi_tag}.dll.a
+%{?with_serialization:%{_libdir}/libboost_serialization-mgw*-mt-%{abi_tag}.dll.a}
 %{_libdir}/libboost_signals-mgw*-mt-%{abi_tag}.dll.a
 %{_libdir}/libboost_system-mgw*-mt-%{abi_tag}.dll.a
 %{_libdir}/libboost_thread_win32-mgw*-mt-%{abi_tag}.dll.a
 %{_libdir}/libboost_timer-mgw*-mt-%{abi_tag}.dll.a
+%{_libdir}/libboost_type_erasure-mgw*-mt-%{abi_tag}.dll.a
 %{_libdir}/libboost_wave-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_wserialization-mgw*-mt-%{abi_tag}.dll.a
+%{?with_serialization:%{_libdir}/libboost_wserialization-mgw*-mt-%{abi_tag}.dll.a}
 # static-only
 %{_libdir}/libboost_exception-mgw*-mt-%{abi_tag}.a
+%{_libdir}/libboost_unit_test_framework-mgw*-mt-%{abi_tag}.a
 %{_includedir}/boost
 
 %files static
@@ -202,13 +204,14 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_program_options-mgw*-mt-%{abi_tag}.a
 %{_libdir}/libboost_random-mgw*-mt-%{abi_tag}.a
 %{_libdir}/libboost_regex-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_serialization-mgw*-mt-%{abi_tag}.a
+%{?with_serialization:%{_libdir}/libboost_serialization-mgw*-mt-%{abi_tag}.a}
 %{_libdir}/libboost_signals-mgw*-mt-%{abi_tag}.a
 %{_libdir}/libboost_system-mgw*-mt-%{abi_tag}.a
 %{_libdir}/libboost_thread_win32-mgw*-mt-%{abi_tag}.a
 %{_libdir}/libboost_timer-mgw*-mt-%{abi_tag}.a
+%{_libdir}/libboost_type_erasure-mgw*-mt-%{abi_tag}.a
 %{_libdir}/libboost_wave-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_wserialization-mgw*-mt-%{abi_tag}.a
+%{?with_serialization:%{_libdir}/libboost_wserialization-mgw*-mt-%{abi_tag}.a}
 
 %files dll
 %defattr(644,root,root,755)
@@ -233,10 +236,11 @@ rm -rf $RPM_BUILD_ROOT
 %{_dlldir}/libboost_program_options-mgw*-mt-%{abi_tag}.dll
 %{_dlldir}/libboost_random-mgw*-mt-%{abi_tag}.dll
 %{_dlldir}/libboost_regex-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_serialization-mgw*-mt-%{abi_tag}.dll
+%{?with_serialization:%{_dlldir}/libboost_serialization-mgw*-mt-%{abi_tag}.dll}
 %{_dlldir}/libboost_signals-mgw*-mt-%{abi_tag}.dll
 %{_dlldir}/libboost_system-mgw*-mt-%{abi_tag}.dll
 %{_dlldir}/libboost_thread_win32-mgw*-mt-%{abi_tag}.dll
 %{_dlldir}/libboost_timer-mgw*-mt-%{abi_tag}.dll
+%{_dlldir}/libboost_type_erasure-mgw*-mt-%{abi_tag}.dll
 %{_dlldir}/libboost_wave-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_wserialization-mgw*-mt-%{abi_tag}.dll
+%{?with_serialization:%{_dlldir}/libboost_wserialization-mgw*-mt-%{abi_tag}.dll}
