@@ -1,20 +1,20 @@
-# TODO: fix serialization
 #
 # Conditional build:
-%bcond_without	context		# Boost Context and dependent modules [gas+PE not supported by upstream]
-%bcond_with	serialization	# Boost Serialization [broken for MinGW in 1.61: https://svn.boost.org/trac/boost/ticket/12205]
+%bcond_without	context		# Boost Context and dependent modules [gas+PE not supported officially by upstream]
+%bcond_without	serialization	# Boost Serialization
+%bcond_without	test		# Boost Test
 #
 %define		realname	boost
 Summary:	The Boost C++ Libraries - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	1.63.0
+Version:	1.68.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://downloads.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	1c837ecd990bb022d07e7aab32b09847
+# Source0-md5:	7fbd1890f571051f2a209681d57d486a
 URL:		http://www.boost.org/
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
@@ -48,7 +48,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		filterout_c	-f[-a-z0-9=]*
 %define		filterout_cxx	-f[-a-z0-9=]*
 
-%define		abi_tag		1_63
+%define		abi_tag		mgw*-mt-x32-1_68
 
 %description
 The Boost web site provides free peer-reviewed portable C++ source
@@ -115,8 +115,9 @@ echo 'using gcc : : %{target}-g++ : ' \
 	%{!?with_context:--without-context --without-coroutine --without-coroutine2} \
 	--without-python \
 	%{!?with_serialization:--without-serialization} \
-	--without-test \
+	%{!?with_test:--without-test} \
 	abi=ms \
+	address-model=32 \
 	binary-format=pe \
 	debug-symbols=on \
 	inlining=on \
@@ -145,100 +146,115 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(644,root,root,755)
-%{_libdir}/libboost_atomic-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_chrono-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_container-mgw*-mt-%{abi_tag}.dll.a
-%{?with_context:%{_libdir}/libboost_context-mgw*-mt-%{abi_tag}.dll.a}
-%{?with_context:%{_libdir}/libboost_coroutine-mgw*-mt-%{abi_tag}.dll.a}
-%{_libdir}/libboost_date_time-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_filesystem-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_graph-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_iostreams-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_locale-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_log-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_log_setup-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_math_c99-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_math_c99f-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_math_c99l-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_math_tr1-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_math_tr1f-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_math_tr1l-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_program_options-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_random-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_regex-mgw*-mt-%{abi_tag}.dll.a
-%{?with_serialization:%{_libdir}/libboost_serialization-mgw*-mt-%{abi_tag}.dll.a}
-%{_libdir}/libboost_signals-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_system-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_thread_win32-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_timer-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_type_erasure-mgw*-mt-%{abi_tag}.dll.a
-%{_libdir}/libboost_wave-mgw*-mt-%{abi_tag}.dll.a
-%{?with_serialization:%{_libdir}/libboost_wserialization-mgw*-mt-%{abi_tag}.dll.a}
+%{_libdir}/libboost_atomic-%{abi_tag}.dll.a
+%{_libdir}/libboost_chrono-%{abi_tag}.dll.a
+%{_libdir}/libboost_container-%{abi_tag}.dll.a
+%{?with_context:%{_libdir}/libboost_context-%{abi_tag}.dll.a}
+%{_libdir}/libboost_contract-%{abi_tag}.dll.a
+%{?with_context:%{_libdir}/libboost_coroutine-%{abi_tag}.dll.a}
+%{_libdir}/libboost_date_time-%{abi_tag}.dll.a
+%{_libdir}/libboost_filesystem-%{abi_tag}.dll.a
+%{_libdir}/libboost_graph-%{abi_tag}.dll.a
+%{_libdir}/libboost_iostreams-%{abi_tag}.dll.a
+%{_libdir}/libboost_locale-%{abi_tag}.dll.a
+%{_libdir}/libboost_log-%{abi_tag}.dll.a
+%{_libdir}/libboost_log_setup-%{abi_tag}.dll.a
+%{_libdir}/libboost_math_c99-%{abi_tag}.dll.a
+%{_libdir}/libboost_math_c99f-%{abi_tag}.dll.a
+%{_libdir}/libboost_math_c99l-%{abi_tag}.dll.a
+%{_libdir}/libboost_math_tr1-%{abi_tag}.dll.a
+%{_libdir}/libboost_math_tr1f-%{abi_tag}.dll.a
+%{_libdir}/libboost_math_tr1l-%{abi_tag}.dll.a
+%{?with_test:%{_libdir}/libboost_prg_exec_monitor-%{abi_tag}.dll.a}
+%{_libdir}/libboost_program_options-%{abi_tag}.dll.a
+%{_libdir}/libboost_random-%{abi_tag}.dll.a
+%{_libdir}/libboost_regex-%{abi_tag}.dll.a
+%{?with_serialization:%{_libdir}/libboost_serialization-%{abi_tag}.dll.a}
+%{_libdir}/libboost_signals-%{abi_tag}.dll.a
+%{_libdir}/libboost_stacktrace_basic-%{abi_tag}.dll.a
+%{_libdir}/libboost_stacktrace_noop-%{abi_tag}.dll.a
+%{_libdir}/libboost_system-%{abi_tag}.dll.a
+%{?with_test:%{_libdir}/libboost_test_exec_monitor-%{abi_tag}.a}
+%{_libdir}/libboost_thread-%{abi_tag}.dll.a
+%{_libdir}/libboost_timer-%{abi_tag}.dll.a
+%{_libdir}/libboost_type_erasure-%{abi_tag}.dll.a
+%{?with_test:%{_libdir}/libboost_unit_test_framework-%{abi_tag}.dll.a}
+%{_libdir}/libboost_wave-%{abi_tag}.dll.a
+%{?with_serialization:%{_libdir}/libboost_wserialization-%{abi_tag}.dll.a}
 # static-only
-%{_libdir}/libboost_exception-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_unit_test_framework-mgw*-mt-%{abi_tag}.a
+%{_libdir}/libboost_exception-%{abi_tag}.a
 %{_includedir}/boost
 
 %files static
 %defattr(644,root,root,755)
-%{_libdir}/libboost_atomic-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_chrono-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_container-mgw*-mt-%{abi_tag}.a
-%{?with_context:%{_libdir}/libboost_context-mgw*-mt-%{abi_tag}.a}
-%{?with_context:%{_libdir}/libboost_coroutine-mgw*-mt-%{abi_tag}.a}
-%{_libdir}/libboost_date_time-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_filesystem-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_graph-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_iostreams-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_locale-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_log-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_log_setup-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_math_c99-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_math_c99f-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_math_c99l-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_math_tr1-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_math_tr1f-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_math_tr1l-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_program_options-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_random-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_regex-mgw*-mt-%{abi_tag}.a
-%{?with_serialization:%{_libdir}/libboost_serialization-mgw*-mt-%{abi_tag}.a}
-%{_libdir}/libboost_signals-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_system-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_thread_win32-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_timer-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_type_erasure-mgw*-mt-%{abi_tag}.a
-%{_libdir}/libboost_wave-mgw*-mt-%{abi_tag}.a
-%{?with_serialization:%{_libdir}/libboost_wserialization-mgw*-mt-%{abi_tag}.a}
+%{_libdir}/libboost_atomic-%{abi_tag}.a
+%{_libdir}/libboost_chrono-%{abi_tag}.a
+%{_libdir}/libboost_container-%{abi_tag}.a
+%{?with_context:%{_libdir}/libboost_context-%{abi_tag}.a}
+%{_libdir}/libboost_contract-%{abi_tag}.a
+%{?with_context:%{_libdir}/libboost_coroutine-%{abi_tag}.a}
+%{_libdir}/libboost_date_time-%{abi_tag}.a
+%{_libdir}/libboost_filesystem-%{abi_tag}.a
+%{_libdir}/libboost_graph-%{abi_tag}.a
+%{_libdir}/libboost_iostreams-%{abi_tag}.a
+%{_libdir}/libboost_locale-%{abi_tag}.a
+%{_libdir}/libboost_log-%{abi_tag}.a
+%{_libdir}/libboost_log_setup-%{abi_tag}.a
+%{_libdir}/libboost_math_c99-%{abi_tag}.a
+%{_libdir}/libboost_math_c99f-%{abi_tag}.a
+%{_libdir}/libboost_math_c99l-%{abi_tag}.a
+%{_libdir}/libboost_math_tr1-%{abi_tag}.a
+%{_libdir}/libboost_math_tr1f-%{abi_tag}.a
+%{_libdir}/libboost_math_tr1l-%{abi_tag}.a
+%{?with_test:%{_libdir}/libboost_prg_exec_monitor-%{abi_tag}.a}
+%{_libdir}/libboost_program_options-%{abi_tag}.a
+%{_libdir}/libboost_random-%{abi_tag}.a
+%{_libdir}/libboost_regex-%{abi_tag}.a
+%{?with_serialization:%{_libdir}/libboost_serialization-%{abi_tag}.a}
+%{_libdir}/libboost_signals-%{abi_tag}.a
+%{_libdir}/libboost_stacktrace_basic-%{abi_tag}.a
+%{_libdir}/libboost_stacktrace_noop-%{abi_tag}.a
+%{_libdir}/libboost_system-%{abi_tag}.a
+%{_libdir}/libboost_thread-%{abi_tag}.a
+%{_libdir}/libboost_timer-%{abi_tag}.a
+%{_libdir}/libboost_type_erasure-%{abi_tag}.a
+%{?with_test:%{_libdir}/libboost_unit_test_framework-%{abi_tag}.a}
+%{_libdir}/libboost_wave-%{abi_tag}.a
+%{?with_serialization:%{_libdir}/libboost_wserialization-%{abi_tag}.a}
 
 %files dll
 %defattr(644,root,root,755)
-%{_dlldir}/libboost_atomic-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_chrono-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_container-mgw*-mt-%{abi_tag}.dll
-%{?with_context:%{_dlldir}/libboost_context-mgw*-mt-%{abi_tag}.dll}
-%{?with_context:%{_dlldir}/libboost_coroutine-mgw*-mt-%{abi_tag}.dll}
-%{_dlldir}/libboost_date_time-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_filesystem-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_graph-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_iostreams-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_locale-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_log-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_log_setup-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_math_c99-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_math_c99f-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_math_c99l-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_math_tr1-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_math_tr1f-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_math_tr1l-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_program_options-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_random-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_regex-mgw*-mt-%{abi_tag}.dll
-%{?with_serialization:%{_dlldir}/libboost_serialization-mgw*-mt-%{abi_tag}.dll}
-%{_dlldir}/libboost_signals-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_system-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_thread_win32-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_timer-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_type_erasure-mgw*-mt-%{abi_tag}.dll
-%{_dlldir}/libboost_wave-mgw*-mt-%{abi_tag}.dll
-%{?with_serialization:%{_dlldir}/libboost_wserialization-mgw*-mt-%{abi_tag}.dll}
+%{_dlldir}/libboost_atomic-%{abi_tag}.dll
+%{_dlldir}/libboost_chrono-%{abi_tag}.dll
+%{_dlldir}/libboost_container-%{abi_tag}.dll
+%{?with_context:%{_dlldir}/libboost_context-%{abi_tag}.dll}
+%{_dlldir}/libboost_contract-%{abi_tag}.dll
+%{?with_context:%{_dlldir}/libboost_coroutine-%{abi_tag}.dll}
+%{_dlldir}/libboost_date_time-%{abi_tag}.dll
+%{_dlldir}/libboost_filesystem-%{abi_tag}.dll
+%{_dlldir}/libboost_graph-%{abi_tag}.dll
+%{_dlldir}/libboost_iostreams-%{abi_tag}.dll
+%{_dlldir}/libboost_locale-%{abi_tag}.dll
+%{_dlldir}/libboost_log-%{abi_tag}.dll
+%{_dlldir}/libboost_log_setup-%{abi_tag}.dll
+%{_dlldir}/libboost_math_c99-%{abi_tag}.dll
+%{_dlldir}/libboost_math_c99f-%{abi_tag}.dll
+%{_dlldir}/libboost_math_c99l-%{abi_tag}.dll
+%{_dlldir}/libboost_math_tr1-%{abi_tag}.dll
+%{_dlldir}/libboost_math_tr1f-%{abi_tag}.dll
+%{_dlldir}/libboost_math_tr1l-%{abi_tag}.dll
+%{?with_test:%{_dlldir}/libboost_prg_exec_monitor-%{abi_tag}.dll}
+%{_dlldir}/libboost_program_options-%{abi_tag}.dll
+%{_dlldir}/libboost_random-%{abi_tag}.dll
+%{_dlldir}/libboost_regex-%{abi_tag}.dll
+%{?with_serialization:%{_dlldir}/libboost_serialization-%{abi_tag}.dll}
+%{_dlldir}/libboost_signals-%{abi_tag}.dll
+%{_dlldir}/libboost_stacktrace_basic-%{abi_tag}.dll
+%{_dlldir}/libboost_stacktrace_noop-%{abi_tag}.dll
+%{_dlldir}/libboost_system-%{abi_tag}.dll
+%{_dlldir}/libboost_thread-%{abi_tag}.dll
+%{_dlldir}/libboost_timer-%{abi_tag}.dll
+%{_dlldir}/libboost_type_erasure-%{abi_tag}.dll
+%{?with_test:%{_dlldir}/libboost_unit_test_framework-%{abi_tag}.dll}
+%{_dlldir}/libboost_wave-%{abi_tag}.dll
+%{?with_serialization:%{_dlldir}/libboost_wserialization-%{abi_tag}.dll}
