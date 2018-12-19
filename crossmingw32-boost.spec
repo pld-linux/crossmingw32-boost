@@ -8,13 +8,13 @@
 Summary:	The Boost C++ Libraries - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	1.68.0
+Version:	1.69.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://downloads.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	7fbd1890f571051f2a209681d57d486a
+# Source0-md5:	a1332494397bf48332cb152abfefcec2
 URL:		http://www.boost.org/
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
@@ -48,7 +48,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		filterout_c	-f[-a-z0-9=]*
 %define		filterout_cxx	-f[-a-z0-9=]*
 
-%define		abi_tag		mgw*-mt-x32-1_68
+%define		abi_tag		mgw*-mt-x32-1_69
 
 %description
 The Boost web site provides free peer-reviewed portable C++ source
@@ -170,7 +170,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_random-%{abi_tag}.dll.a
 %{_libdir}/libboost_regex-%{abi_tag}.dll.a
 %{?with_serialization:%{_libdir}/libboost_serialization-%{abi_tag}.dll.a}
-%{_libdir}/libboost_signals-%{abi_tag}.dll.a
 %{_libdir}/libboost_stacktrace_basic-%{abi_tag}.dll.a
 %{_libdir}/libboost_stacktrace_noop-%{abi_tag}.dll.a
 %{_libdir}/libboost_system-%{abi_tag}.dll.a
@@ -211,7 +210,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_random-%{abi_tag}.a
 %{_libdir}/libboost_regex-%{abi_tag}.a
 %{?with_serialization:%{_libdir}/libboost_serialization-%{abi_tag}.a}
-%{_libdir}/libboost_signals-%{abi_tag}.a
 %{_libdir}/libboost_stacktrace_basic-%{abi_tag}.a
 %{_libdir}/libboost_stacktrace_noop-%{abi_tag}.a
 %{_libdir}/libboost_system-%{abi_tag}.a
@@ -248,7 +246,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_dlldir}/libboost_random-%{abi_tag}.dll
 %{_dlldir}/libboost_regex-%{abi_tag}.dll
 %{?with_serialization:%{_dlldir}/libboost_serialization-%{abi_tag}.dll}
-%{_dlldir}/libboost_signals-%{abi_tag}.dll
 %{_dlldir}/libboost_stacktrace_basic-%{abi_tag}.dll
 %{_dlldir}/libboost_stacktrace_noop-%{abi_tag}.dll
 %{_dlldir}/libboost_system-%{abi_tag}.dll
