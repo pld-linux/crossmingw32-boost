@@ -8,13 +8,13 @@
 Summary:	The Boost C++ Libraries - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	1.70.0
+Version:	1.71.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
-Source0:	http://downloads.sourceforge.net/boost/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	242ecc63507711d6706b9b0c0d0c7d4f
+Source0:	http://dl.bintray.com/boostorg/release/%{version}/source/%{realname}_%{fver}.tar.bz2
+# Source0-md5:	4cdf9b5c2dc01fb2b7b733d5af30e558
 URL:		http://www.boost.org/
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
@@ -48,7 +48,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		filterout_c	-f[-a-z0-9=]*
 %define		filterout_cxx	-f[-a-z0-9=]*
 
-%define		abi_tag		mgw*-mt-x32-1_70
+%define		abi_tag		mgw*-mt-x32-1_71
 
 %description
 The Boost web site provides free peer-reviewed portable C++ source
