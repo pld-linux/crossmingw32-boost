@@ -8,13 +8,14 @@
 Summary:	The Boost C++ Libraries - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	1.71.0
+Version:	1.73.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	http://dl.bintray.com/boostorg/release/%{version}/source/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	4cdf9b5c2dc01fb2b7b733d5af30e558
+# Source0-md5:	9273c8c4576423562bbe84574b07b2bd
+Patch0:		boost-mingw-lld.patch
 URL:		http://www.boost.org/
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
@@ -48,7 +49,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		filterout_c	-f[-a-z0-9=]*
 %define		filterout_cxx	-f[-a-z0-9=]*
 
-%define		abi_tag		mgw*-mt-x32-1_71
+%define		abi_tag		mgw*-mt-x32-1_73
 
 %description
 The Boost web site provides free peer-reviewed portable C++ source
@@ -96,6 +97,9 @@ Boost - biblioteki DLL dla Windows.
 
 %prep
 %setup -q -n %{realname}_%{fver}
+cd libs/context
+%patch0 -R -p1
+cd ../..
 
 echo 'using gcc : : %{target}-g++ : ' \
 	'<cxxflags>"%{rpmcxxflags}"' \
@@ -165,6 +169,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_math_tr1-%{abi_tag}.dll.a
 %{_libdir}/libboost_math_tr1f-%{abi_tag}.dll.a
 %{_libdir}/libboost_math_tr1l-%{abi_tag}.dll.a
+%{_libdir}/libboost_nowide-%{abi_tag}.dll.a
 %{?with_test:%{_libdir}/libboost_prg_exec_monitor-%{abi_tag}.dll.a}
 %{_libdir}/libboost_program_options-%{abi_tag}.dll.a
 %{_libdir}/libboost_random-%{abi_tag}.dll.a
@@ -205,6 +210,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_math_tr1-%{abi_tag}.a
 %{_libdir}/libboost_math_tr1f-%{abi_tag}.a
 %{_libdir}/libboost_math_tr1l-%{abi_tag}.a
+%{_libdir}/libboost_nowide-%{abi_tag}.a
 %{?with_test:%{_libdir}/libboost_prg_exec_monitor-%{abi_tag}.a}
 %{_libdir}/libboost_program_options-%{abi_tag}.a
 %{_libdir}/libboost_random-%{abi_tag}.a
@@ -241,6 +247,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_dlldir}/libboost_math_tr1-%{abi_tag}.dll
 %{_dlldir}/libboost_math_tr1f-%{abi_tag}.dll
 %{_dlldir}/libboost_math_tr1l-%{abi_tag}.dll
+%{_dlldir}/libboost_nowide-%{abi_tag}.dll
 %{?with_test:%{_dlldir}/libboost_prg_exec_monitor-%{abi_tag}.dll}
 %{_dlldir}/libboost_program_options-%{abi_tag}.dll
 %{_dlldir}/libboost_random-%{abi_tag}.dll
