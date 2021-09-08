@@ -1,0 +1,13 @@
+Bug has been fixed: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83562
+probably after 7.5.0, but gcc 7.5.0+original mingw32 implementation seems not affected.
+--- boost_1_76_0/boost/config/compiler/gcc.hpp.orig	2021-04-13 18:21:39.000000000 +0200
++++ boost_1_76_0/boost/config/compiler/gcc.hpp	2021-09-08 18:02:35.766161179 +0200
+@@ -323,7 +323,7 @@
+ #  define BOOST_FALLTHROUGH __attribute__((fallthrough))
+ #endif
+ 
+-#if defined(__MINGW32__) && !defined(__MINGW64__)
++#if (defined(__MINGW32__) && !defined(__MINGW64__)) && (BOOST_GCC_VERSION < 70500)
+ // Currently (March 2019) thread_local is broken on mingw for all current 32bit compiler releases, see
+ // https://sourceforge.net/p/mingw-w64/bugs/527/
+ // Not setting this causes program termination on thread exit.
