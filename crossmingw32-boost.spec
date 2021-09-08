@@ -8,14 +8,14 @@
 Summary:	The Boost C++ Libraries - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	1.73.0
+Version:	1.76.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
-Source0:	http://dl.bintray.com/boostorg/release/%{version}/source/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	9273c8c4576423562bbe84574b07b2bd
-Patch0:		boost-mingw-lld.patch
+Source0:	https://boostorg.jfrog.io/artifactory/main/release/%{version}/source/%{realname}_%{fver}.tar.bz2
+# Source0-md5:	33334dd7f862e8ac9fe1cc7c6584fb6d
+Patch0:		boost-allow-mingw32-thread-local.patch
 URL:		http://www.boost.org/
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
@@ -49,7 +49,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		filterout_c	-f[-a-z0-9=]*
 %define		filterout_cxx	-f[-a-z0-9=]*
 
-%define		abi_tag		mgw*-mt-x32-1_73
+%define		abi_tag		mgw*-mt-x32-1_76
 
 %description
 The Boost web site provides free peer-reviewed portable C++ source
@@ -97,9 +97,7 @@ Boost - biblioteki DLL dla Windows.
 
 %prep
 %setup -q -n %{realname}_%{fver}
-cd libs/context
-%patch0 -R -p1
-cd ../..
+%patch0 -p1
 
 echo 'using gcc : : %{target}-g++ : ' \
 	'<cxxflags>"%{rpmcxxflags}"' \
@@ -160,6 +158,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_filesystem-%{abi_tag}.dll.a
 %{_libdir}/libboost_graph-%{abi_tag}.dll.a
 %{_libdir}/libboost_iostreams-%{abi_tag}.dll.a
+%{_libdir}/libboost_json-%{abi_tag}.dll.a
 %{_libdir}/libboost_locale-%{abi_tag}.dll.a
 %{_libdir}/libboost_log-%{abi_tag}.dll.a
 %{_libdir}/libboost_log_setup-%{abi_tag}.dll.a
@@ -201,6 +200,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_filesystem-%{abi_tag}.a
 %{_libdir}/libboost_graph-%{abi_tag}.a
 %{_libdir}/libboost_iostreams-%{abi_tag}.a
+%{_libdir}/libboost_json-%{abi_tag}.a
 %{_libdir}/libboost_locale-%{abi_tag}.a
 %{_libdir}/libboost_log-%{abi_tag}.a
 %{_libdir}/libboost_log_setup-%{abi_tag}.a
@@ -238,6 +238,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_dlldir}/libboost_filesystem-%{abi_tag}.dll
 %{_dlldir}/libboost_graph-%{abi_tag}.dll
 %{_dlldir}/libboost_iostreams-%{abi_tag}.dll
+%{_dlldir}/libboost_json-%{abi_tag}.dll
 %{_dlldir}/libboost_locale-%{abi_tag}.dll
 %{_dlldir}/libboost_log-%{abi_tag}.dll
 %{_dlldir}/libboost_log_setup-%{abi_tag}.dll
