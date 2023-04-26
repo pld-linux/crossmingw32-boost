@@ -8,19 +8,19 @@
 Summary:	The Boost C++ Libraries - MinGW32 cross version
 Summary(pl.UTF-8):	Biblioteki C++ "Boost" - wersja skrośna dla MinGW32
 Name:		crossmingw32-%{realname}
-Version:	1.76.0
+Version:	1.81.0
 %define	fver	%(echo %{version} | tr . _)
 Release:	1
 License:	Boost Software License and others
 Group:		Development/Libraries
 Source0:	https://boostorg.jfrog.io/artifactory/main/release/%{version}/source/%{realname}_%{fver}.tar.bz2
-# Source0-md5:	33334dd7f862e8ac9fe1cc7c6584fb6d
+# Source0-md5:	3276c0637d1be8687740c550237ef999
 Patch0:		boost-allow-mingw32-thread-local.patch
 URL:		http://www.boost.org/
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
 BuildRequires:	crossmingw32-runtime
-BuildRequires:	crossmingw32-w32api
+BuildRequires:	crossmingw32-w32api >= 1:5.4.2-2
 BuildRequires:	crossmingw32-zlib
 Requires:	crossmingw32-bzip2
 Requires:	crossmingw32-runtime
@@ -50,7 +50,7 @@ BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 %define		filterout_c	-f[-a-z0-9=]*
 %define		filterout_cxx	-f[-a-z0-9=]*
 
-%define		abi_tag		mgw*-mt-x32-1_76
+%define		abi_tag		mgw*-mt-x32-1_81
 
 %description
 The Boost web site provides free peer-reviewed portable C++ source
@@ -156,6 +156,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_contract-%{abi_tag}.dll.a
 %{?with_context:%{_libdir}/libboost_coroutine-%{abi_tag}.dll.a}
 %{_libdir}/libboost_date_time-%{abi_tag}.dll.a
+%{_libdir}/libboost_fiber-%{abi_tag}.dll.a
 %{_libdir}/libboost_filesystem-%{abi_tag}.dll.a
 %{_libdir}/libboost_graph-%{abi_tag}.dll.a
 %{_libdir}/libboost_iostreams-%{abi_tag}.dll.a
@@ -183,6 +184,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_timer-%{abi_tag}.dll.a
 %{_libdir}/libboost_type_erasure-%{abi_tag}.dll.a
 %{?with_test:%{_libdir}/libboost_unit_test_framework-%{abi_tag}.dll.a}
+%{_libdir}/libboost_url-%{abi_tag}.dll.a
 %{_libdir}/libboost_wave-%{abi_tag}.dll.a
 %{?with_serialization:%{_libdir}/libboost_wserialization-%{abi_tag}.dll.a}
 # static-only
@@ -198,6 +200,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_contract-%{abi_tag}.a
 %{?with_context:%{_libdir}/libboost_coroutine-%{abi_tag}.a}
 %{_libdir}/libboost_date_time-%{abi_tag}.a
+%{_libdir}/libboost_fiber-%{abi_tag}.a
 %{_libdir}/libboost_filesystem-%{abi_tag}.a
 %{_libdir}/libboost_graph-%{abi_tag}.a
 %{_libdir}/libboost_iostreams-%{abi_tag}.a
@@ -224,6 +227,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libboost_timer-%{abi_tag}.a
 %{_libdir}/libboost_type_erasure-%{abi_tag}.a
 %{?with_test:%{_libdir}/libboost_unit_test_framework-%{abi_tag}.a}
+%{_libdir}/libboost_url-%{abi_tag}.a
 %{_libdir}/libboost_wave-%{abi_tag}.a
 %{?with_serialization:%{_libdir}/libboost_wserialization-%{abi_tag}.a}
 
@@ -236,6 +240,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_dlldir}/libboost_contract-%{abi_tag}.dll
 %{?with_context:%{_dlldir}/libboost_coroutine-%{abi_tag}.dll}
 %{_dlldir}/libboost_date_time-%{abi_tag}.dll
+%{_dlldir}/libboost_fiber-%{abi_tag}.dll
 %{_dlldir}/libboost_filesystem-%{abi_tag}.dll
 %{_dlldir}/libboost_graph-%{abi_tag}.dll
 %{_dlldir}/libboost_iostreams-%{abi_tag}.dll
@@ -262,5 +267,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_dlldir}/libboost_timer-%{abi_tag}.dll
 %{_dlldir}/libboost_type_erasure-%{abi_tag}.dll
 %{?with_test:%{_dlldir}/libboost_unit_test_framework-%{abi_tag}.dll}
+%{_dlldir}/libboost_url-%{abi_tag}.dll
 %{_dlldir}/libboost_wave-%{abi_tag}.dll
 %{?with_serialization:%{_dlldir}/libboost_wserialization-%{abi_tag}.dll}
