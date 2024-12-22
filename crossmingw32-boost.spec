@@ -98,7 +98,7 @@ Boost - biblioteki DLL dla Windows.
 
 %prep
 %setup -q -n %{realname}_%{fver}
-%patch0 -p1
+%patch -P0 -p1
 
 echo 'using gcc : : %{target}-g++ : ' \
 	'<cxxflags>"%{rpmcxxflags}"' \
