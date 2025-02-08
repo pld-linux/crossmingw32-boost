@@ -20,6 +20,7 @@ Patch1:		boost-mingw32.patch
 URL:		http://www.boost.org/
 BuildRequires:	crossmingw32-bzip2
 BuildRequires:	crossmingw32-gcc-c++
+BuildRequires:	crossmingw32-libquadmath
 BuildRequires:	crossmingw32-runtime
 BuildRequires:	crossmingw32-w32api >= 1:5.4.2-2
 BuildRequires:	crossmingw32-zlib
