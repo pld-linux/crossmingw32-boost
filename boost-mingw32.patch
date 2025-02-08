@@ -1,0 +1,22 @@
+--- boost_1_85_0/boost/json/detail/charconv/detail/fast_float/float_common.hpp.orig	2024-04-11 20:48:02.000000000 +0200
++++ boost_1_85_0/boost/json/detail/charconv/detail/fast_float/float_common.hpp	2025-02-08 12:50:52.571548148 +0100
+@@ -66,7 +66,7 @@ using parse_options = parse_options_t<ch
+   #endif
+ #endif
+ 
+-#if ((defined(_WIN32) || defined(_WIN64)) && !defined(__clang__))
++#if ((defined(_WIN32) || defined(_WIN64)) && !defined(__clang__) && !defined(__GNUC__))
+ #include <intrin.h>
+ #endif
+ 
+--- boost_1_85_0/boost/charconv/detail/fast_float/float_common.hpp.orig	2024-04-11 20:48:02.000000000 +0200
++++ boost_1_85_0/boost/charconv/detail/fast_float/float_common.hpp	2025-02-08 12:50:52.571548148 +0100
+@@ -66,7 +66,7 @@ using parse_options = parse_options_t<ch
+   #endif
+ #endif
+ 
+-#if ((defined(_WIN32) || defined(_WIN64)) && !defined(__clang__))
++#if ((defined(_WIN32) || defined(_WIN64)) && !defined(__clang__) && !defined(__GNUC__))
+ #include <intrin.h>
+ #endif
+ 
